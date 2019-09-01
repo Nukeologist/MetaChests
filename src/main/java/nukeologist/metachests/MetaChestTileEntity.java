@@ -57,7 +57,6 @@ public class MetaChestTileEntity extends TileEntity implements INamedContainerPr
                 MetaChestTileEntity.this.markDirty();
                 if (MetaChestTileEntity.this.getStackOfSlots().isEmpty())
                     MetaChestTileEntity.this.setItemGroup(null);
-                    //this.stacks.sort(Comparator.comparing(stack -> stack.getDisplayName().getString()));
             }
 
             @Override
