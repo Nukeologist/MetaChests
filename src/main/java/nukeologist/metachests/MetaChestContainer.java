@@ -64,7 +64,7 @@ public class MetaChestContainer extends Container {
         this.addedPos = new Vec3d(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
 
         //meta chest inventory
-        te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(inv -> {
+        this.te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(inv -> {
             for (int i = 0; i < 5; ++i) {
                 for (int j = 0; j < 9; ++j) {
                     this.addSlot(new SlotItemHandler(inv, i * 9 + j, 9 + j * 18, 18 + i * 18) {
@@ -90,10 +90,6 @@ public class MetaChestContainer extends Container {
         }
     }
 
-    public void resetAndAddSlots() {
-
-    }
-
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
@@ -108,6 +104,8 @@ public class MetaChestContainer extends Container {
     }
 
     //based on inventory sorter (by cpw) (modified) https://github.com/cpw/inventorysorter
+    //changed to not use a itemstackholder. May or may not break the contract of equals,
+    //must test to see. (see SortedMultiSet)
     private void sortItems(PlayerEntity player) {
         final Multiset<ItemStack> itemcounts = getInventoryContent(0, 45, player);
 
@@ -118,8 +116,8 @@ public class MetaChestContainer extends Container {
             MetaChests.LOGGER.warn("Something weird happened ", e);
             return;
         }
-        int slotLow = 0;
-        int slotHigh = 45 + 1;
+        final int slotLow = 0;
+        final int slotHigh = 45 + 1;
 
         Multiset.Entry<ItemStack> stackHolder = itemsIterator.hasNext() ? itemsIterator.next() : null;
         int itemCount = stackHolder != null ? stackHolder.getCount() : 0;
@@ -149,7 +147,6 @@ public class MetaChestContainer extends Container {
 
     public Multiset<ItemStack> getInventoryContent(int slotLow, int end, PlayerEntity player) {
         int slotHigh = end + 1;
-
         SortedMultiset<ItemStack> itemcounts = TreeMultiset.create(COMPARATOR);
         for (int i = slotLow; i < slotHigh; i++) {
             final Slot slot = player.openContainer.getSlot(i);

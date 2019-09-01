@@ -49,6 +49,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static nukeologist.metachests.MetaChests.location;
 
@@ -90,6 +91,26 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
         this.searchField.tick();
     }
 
+    private void highLightSlots() {
+        final List<Item> itemList = searchedStacks.stream().map(ItemStack::getItem).collect(Collectors.toList());
+        this.container.inventorySlots.forEach(slot -> {
+            if (!itemList.contains(slot.getStack().getItem())) {
+                int slotColor;
+                GlStateManager.disableLighting();
+                GlStateManager.disableDepthTest();
+                int j1 = slot.xPos + this.guiLeft;
+                int k1 = slot.yPos + this.guiTop;
+                GlStateManager.colorMask(true, true, true, false);
+                slotColor = this.getSlotColor(slot.slotNumber);
+                this.fillGradient(j1, k1, j1 + 16, k1 + 16, slotColor, slotColor);
+                GlStateManager.colorMask(true, true, true, true);
+                GlStateManager.enableLighting();
+                GlStateManager.enableDepthTest();
+            }
+        });
+
+    }
+
     @Override
     public boolean charTyped(char p_charTyped_1_, int p_charTyped_2_) {
         if (this.field_195377_F) {
@@ -107,6 +128,7 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
 
     @Override
     public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
+        this.field_195377_F = false;
         //boolean flag = !this.hasTmpInventory(this.hoveredSlot) || this.hoveredSlot != null && this.hoveredSlot.getHasStack();
         boolean flag = this.hoveredSlot != null && this.hoveredSlot.getHasStack();
         if (flag && this.func_195363_d(p_keyPressed_1_, p_keyPressed_2_)) {
@@ -125,6 +147,12 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
             }
         }
         //return super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
+    }
+
+    @Override
+    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+        this.field_195377_F = false;
+        return super.keyReleased(keyCode, scanCode, slotColor);
     }
 
     @Override   //copied
@@ -181,7 +209,11 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
     public void render(int mouseX, int mouseY, float partialTicks) {
         this.renderBackground();
         super.render(mouseX, mouseY, partialTicks);
+        if (!this.searchField.getText().isEmpty()) {
+            this.highLightSlots();
+        }
         this.renderHoveredToolTip(mouseX, mouseY);
+
     }
 
     @Override
