@@ -25,16 +25,16 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.IFluidState;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathType;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -43,6 +43,11 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
+
+import java.util.Random;
 
 import static net.minecraft.block.ChestBlock.WATERLOGGED;
 
@@ -84,6 +89,44 @@ public class MetaChestBlock extends Block implements IWaterLoggable {
         super.eventReceived(state, worldIn, pos, id, param);
         TileEntity tileentity = worldIn.getTileEntity(pos);
         return tileentity != null && tileentity.receiveClientEvent(id, param);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (state.getBlock() != newState.getBlock()) {
+            TileEntity tileentity = worldIn.getTileEntity(pos);
+            if (tileentity instanceof MetaChestTileEntity) {
+                InventoryHelper.dropItems(worldIn, pos, dropItemHandlerContents(tileentity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(() -> new ItemStackHandler()), new Random()));
+            }
+            super.onReplaced(state, worldIn, pos, newState, isMoving);
+        }
+    }
+
+    /**
+     * Get a list of the {@link IItemHandler}'s contents with the stacks randomly split.
+     * <p>
+     * Adapted from {@link InventoryHelper}.
+     *
+     * @param itemHandler The inventory
+     * @param random      The Random object
+     * @return The drops list
+     */
+    public static NonNullList<ItemStack> dropItemHandlerContents(IItemHandler itemHandler, Random random) {
+        final NonNullList<ItemStack> drops = NonNullList.create();
+
+        for (int slot = 0; slot < itemHandler.getSlots(); ++slot) {
+            while (!itemHandler.getStackInSlot(slot).isEmpty()) {
+                final int amount = random.nextInt(21) + 10;
+
+                if (!itemHandler.extractItem(slot, amount, true).isEmpty()) {
+                    final ItemStack itemStack = itemHandler.extractItem(slot, amount, false);
+                    drops.add(itemStack);
+                }
+            }
+        }
+
+        return drops;
     }
 
     @SuppressWarnings("deprecation")

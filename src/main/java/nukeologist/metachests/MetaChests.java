@@ -30,6 +30,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -85,7 +86,7 @@ public class MetaChests {
         public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
             LOGGER.info("Registering blocks");
             blockRegistryEvent.getRegistry().registerAll(
-                    new MetaChestBlock(Block.Properties.create(Material.WOOD)).setRegistryName(location("metachest"))
+                    new MetaChestBlock(Block.Properties.create(Material.WOOD).hardnessAndResistance(3.0F, 3.0F).harvestTool(ToolType.AXE)).setRegistryName(location("metachest"))
             );
             LOGGER.info("Finished registering blocks");
         }
