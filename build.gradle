@@ -14,7 +14,7 @@ apply plugin: 'maven-publish'
 
 version = '1.0'
 group = 'nukeologist.metachests' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'MetaChests'
+archivesBaseName = 'MetaChests-1.14.4'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
@@ -84,11 +84,20 @@ minecraft {
     }
 }
 
+repositories {
+    maven {
+        url "http://dvs1.progwml6.com/files/maven"
+    }
+    maven {
+        url "http://tehnut.info/maven"
+    }
+}
+
 dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft 'net.minecraftforge:forge:1.14.4-28.0.75'
+    minecraft 'net.minecraftforge:forge:1.14.4-28.0.83'
 
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
@@ -107,7 +116,8 @@ dependencies {
     // For more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
+    compile fg.deobf('mezz.jei:jei-1.14.4:+')
+    compile fg.deobf('mcp.mobius.waila:Hwyla:1.10+')
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
