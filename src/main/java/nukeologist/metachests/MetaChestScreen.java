@@ -32,6 +32,7 @@ import net.minecraft.client.util.SearchTreeManager;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -44,10 +45,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -60,6 +58,7 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
     //taken from creative tab
     private TextFieldWidget searchField;
     private final Map<ResourceLocation, Tag<Item>> tagSearchResults = Maps.newTreeMap();
+    private ItemGroup group;
     private boolean field_195377_F;
 
     public final NonNullList<ItemStack> searchedStacks = NonNullList.create();
@@ -67,22 +66,23 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
     public MetaChestScreen(MetaChestContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
         this.ySize = 195;
-        this.xSize = 195;
+        this.xSize = 176;
     }
 
     @Override
     protected void init() {
         super.init();
-        this.searchField = new TextFieldWidget(this.font, this.guiLeft + 82, this.guiTop + 6, 80, 9, I18n.format("itemGroup.search"));
+        this.searchField = new TextFieldWidget(this.font, this.guiLeft + 100, this.guiTop + 6, 70, 9, I18n.format("itemGroup.search"));
         this.searchField.setMaxStringLength(50);
         this.searchField.setEnableBackgroundDrawing(false);
         this.searchField.setVisible(true);
         this.searchField.setCanLoseFocus(false);
         this.searchField.setFocused2(true);
         this.searchField.setTextColor(16777215);
-        this.searchField.setWidth(89); //default 89
-        this.searchField.x = this.guiLeft + (82 /*default left*/ + 89 /*default width*/) - this.searchField.getWidth();
+        this.searchField.setWidth(65); //default 89
+        this.searchField.x = this.guiLeft + (100 /*default left*/ + 65 /*default width*/) - this.searchField.getWidth();
         this.children.add(this.searchField);
+        this.group = this.getItemGroup();
     }
 
     @Override
@@ -208,9 +208,14 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         this.renderBackground();
+
         super.render(mouseX, mouseY, partialTicks);
         if (!this.searchField.getText().isEmpty()) {
             this.highLightSlots();
+        }
+        this.getItemGroup();
+        if (this.group != null) {
+            this.font.drawString(I18n.format(this.group.getTranslationKey()), this.guiLeft + 4, this.guiTop + 6, 4210752);
         }
         this.renderHoveredToolTip(mouseX, mouseY);
 
@@ -251,6 +256,19 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
 
         //this.currentScroll = 0.0F;
         //this.container.scrollTo(0.0F);
+    }
+
+    private ItemGroup getItemGroup() {
+        for (int i = 0; i < 45; i++) {
+            final Slot slot = this.container.inventorySlots.get(i);
+            final ItemStack stack = slot.getStack();
+            if (!stack.isEmpty()) {
+                this.group = stack.getItem().getGroup();
+                return stack.getItem().getGroup();
+            }
+        }
+        this.group = null;
+        return null;
     }
 
     //copied

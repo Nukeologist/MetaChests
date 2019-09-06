@@ -107,7 +107,9 @@ public class MetaChestContainer extends Container {
     //changed to not use a itemstackholder. May or may not break the contract of equals,
     //must test to see. (see SortedMultiSet)
     private void sortItems(PlayerEntity player) {
-        final Multiset<ItemStack> itemcounts = getInventoryContent(0, 45, player);
+        final int slotLow = 0;
+        final int slotHigh = 45;
+        final Multiset<ItemStack> itemcounts = getInventoryContent(slotLow, slotHigh, player);
 
         final UnmodifiableIterator<Multiset.Entry<ItemStack>> itemsIterator;
         try {
@@ -116,8 +118,6 @@ public class MetaChestContainer extends Container {
             MetaChests.LOGGER.warn("Something weird happened ", e);
             return;
         }
-        final int slotLow = 0;
-        final int slotHigh = 45 + 1;
 
         Multiset.Entry<ItemStack> stackHolder = itemsIterator.hasNext() ? itemsIterator.next() : null;
         int itemCount = stackHolder != null ? stackHolder.getCount() : 0;
@@ -146,9 +146,8 @@ public class MetaChestContainer extends Container {
     }
 
     public Multiset<ItemStack> getInventoryContent(int slotLow, int end, PlayerEntity player) {
-        int slotHigh = end + 1;
         SortedMultiset<ItemStack> itemcounts = TreeMultiset.create(COMPARATOR);
-        for (int i = slotLow; i < slotHigh; i++) {
+        for (int i = slotLow; i < end; i++) {
             final Slot slot = player.openContainer.getSlot(i);
             if (!slot.canTakeStack(player)) continue;
             ItemStack stack = slot.getStack();
