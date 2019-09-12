@@ -68,35 +68,29 @@ public class MetaChestTileEntity extends TileEntity implements INamedContainerPr
 
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                ItemGroup group = MetaChestTileEntity.this.getItemGroup();
+                final ItemGroup group = MetaChestTileEntity.this.getItemGroup();
                 if (group != null) {
                     return group == stack.getItem().getGroup();
+                } else {
+                    return stack.getItem().getGroup() != null;
                 }
-                return true;
             }
 
             @Nonnull
             @Override
             public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-                ItemGroup stackGroup = stack.getItem().getGroup();
+                final ItemGroup stackGroup = stack.getItem().getGroup();
+                if (stackGroup == null) return stack;
                 if (MetaChestTileEntity.this.getItemGroup() == null) {
-                    if (stackGroup == null) {
-                        return stack;
-                    } else {
-                        if (!simulate) {
-                            MetaChestTileEntity.this.setItemGroup(stackGroup);
-                        }
-                        return super.insertItem(slot, stack, simulate);
+                    if (!simulate) {
+                        MetaChestTileEntity.this.setItemGroup(stackGroup);
                     }
+                    return super.insertItem(slot, stack, simulate);
                 } else {
-                    if (stackGroup == null) {
-                        return stack;
+                    if (MetaChestTileEntity.this.getItemGroup() == stackGroup) {
+                        return super.insertItem(slot, stack, simulate);
                     } else {
-                        if (MetaChestTileEntity.this.getItemGroup() == stackGroup) {
-                            return super.insertItem(slot, stack, simulate);
-                        } else {
-                            return stack;
-                        }
+                        return stack;
                     }
                 }
             }
