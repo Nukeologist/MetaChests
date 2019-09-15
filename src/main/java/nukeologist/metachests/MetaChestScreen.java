@@ -56,7 +56,7 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
     private static final ResourceLocation GUI = location("textures/gui/metachestgui.png");
 
     //taken from creative tab
-    private TextFieldWidget searchField;
+    protected TextFieldWidget searchField;
     private final Map<ResourceLocation, Tag<Item>> tagSearchResults = Maps.newTreeMap();
     private ItemGroup group;
     private boolean field_195377_F;
@@ -80,9 +80,13 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
         this.searchField.setFocused2(true);
         this.searchField.setTextColor(16777215);
         this.searchField.setWidth(65); //default 89
-        this.searchField.x = this.guiLeft + (100 /*default left*/ + 65 /*default width*/) - this.searchField.getWidth();
+        this.searchField.x = getSearchX();
         this.children.add(this.searchField);
         this.group = this.getItemGroup();
+    }
+
+    protected int getSearchX() {
+        return this.guiLeft + (100 /*default left*/ + 65 /*default width*/) - this.searchField.getWidth();
     }
 
     @Override
@@ -259,7 +263,8 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
     }
 
     private ItemGroup getItemGroup() {
-        for (int i = 0; i < 45; i++) {
+        final int containerSlots = this.container.getTeSlotsSize();
+        for (int i = 0; i < containerSlots; i++) {
             final Slot slot = this.container.inventorySlots.get(i);
             final ItemStack stack = slot.getStack();
             if (!stack.isEmpty()) {

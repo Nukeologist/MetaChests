@@ -1,3 +1,14 @@
 {
-  "block.metachests.metachest": "Baú Meta"
+  "block.metachests.metachest":            "Baú Meta",
+  "block.metachests.largemetachest":       "Baú Meta Grande",
+
+  "item.metachests.metachestupgrade" :     "Melhoria para Baú Meta",
+  "item.metachests.metachestmetaupgrade":  "Melhoria de Meta para Meta Grande",
+  "item.metachests.metachestlargeupgrade": "Melhoria para Baú Meta Grande",
+  "item.metachests.metachestkeepupgrade":  "Melhoria para manter itens",
+
+  "info.metachests.chestupgrade":          "Melhora um baú normal para um Baú Meta.",
+  "info.metachests.metaupgrade":           "Faz o Baú Meta ter mais espaço",
+  "info.metachests.chestlargeupgrade":     "Melhora um baú normal para um Baú Meta Grande.",
+  "info.metachests.keepupgrade":           "Faz o baú meta manter itens quando quebrado, UMA VEZ."
 }

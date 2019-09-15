@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#I#",
+    "#A#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "tag": "minecraft:logs"
+    },
+    "A": {
+      "tag": "forge:gems/diamond"
+    },
+    "I": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "result": {
+    "item": "metachests:metachestkeepupgrade"
+  }
+}

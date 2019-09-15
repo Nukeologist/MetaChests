@@ -21,11 +21,13 @@
 package nukeologist.metachests;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.Rarity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -53,11 +55,26 @@ public class MetaChests {
     @ObjectHolder(MODID + ":metachest")
     public static Block metaChestBlock;
 
+    @ObjectHolder(MODID + ":largemetachest")
+    public static Block largeMetaChestBlock;
+
     @ObjectHolder(MODID + ":metachest")
     public static TileEntityType metaChestTile;
 
+    @ObjectHolder(MODID + ":largemetachest")
+    public static TileEntityType largeMetaChestTile;
+
     @ObjectHolder(MODID + ":metachest")
     public static ContainerType metaChestContainer;
+
+    @ObjectHolder(MODID + ":largemetachest")
+    public static ContainerType largeMetaChestContainer;
+
+    @ObjectHolder(MODID + ":metachest")
+    public static Item metaChestItem;
+
+    @ObjectHolder(MODID + ":largemetachest")
+    public static Item largeMetaChestItem;
 
     public MetaChests() {
         // Register the setup method for modloading
@@ -85,8 +102,10 @@ public class MetaChests {
         @SubscribeEvent
         public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
             LOGGER.info("Registering blocks");
+            final Block.Properties PROPERTIES = Block.Properties.create(Material.WOOD).hardnessAndResistance(3.0F, 3.0F).harvestTool(ToolType.AXE).sound(SoundType.WOOD);
             blockRegistryEvent.getRegistry().registerAll(
-                    new MetaChestBlock(Block.Properties.create(Material.WOOD).hardnessAndResistance(3.0F, 3.0F).harvestTool(ToolType.AXE)).setRegistryName(location("metachest"))
+                    new MetaChestBlock(PROPERTIES).setRegistryName(location("metachest")),
+                    new LargeMetaChestBlock(PROPERTIES).setRegistryName(location("largemetachest"))
             );
             LOGGER.info("Finished registering blocks");
         }
@@ -94,8 +113,15 @@ public class MetaChests {
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> itemRegistryEvent) {
             LOGGER.info("Registering items");
+            final Item.Properties UPGRADES = new Item.Properties().group(ItemGroup.MISC).maxStackSize(16).rarity(Rarity.UNCOMMON);
+            final Item.Properties DECO = new Item.Properties().group(ItemGroup.DECORATIONS);
             itemRegistryEvent.getRegistry().registerAll(
-                    new BlockItem(metaChestBlock, new Item.Properties().group(ItemGroup.DECORATIONS)).setRegistryName(location("metachest"))
+                    new BlockItem(metaChestBlock, DECO).setRegistryName(location("metachest")),
+                    new BlockItem(largeMetaChestBlock, DECO).setRegistryName(location("largemetachest")),
+                    new UpgradeItem(UPGRADES, Upgrade.CHEST_TO_META).setRegistryName(location("metachestupgrade")),
+                    new UpgradeItem(UPGRADES, Upgrade.META_TO_LARGE_META).setRegistryName(location("metachestmetaupgrade")),
+                    new UpgradeItem(UPGRADES, Upgrade.CHEST_TO_LARGE_META).setRegistryName(location("metachestlargeupgrade")),
+                    new UpgradeItem(UPGRADES, Upgrade.KEEP_CONTENT).setRegistryName(location("metachestkeepupgrade"))
             );
             LOGGER.info("Finished registering items");
         }
@@ -104,7 +130,8 @@ public class MetaChests {
         public static void onTilesRegistry(final RegistryEvent.Register<TileEntityType<?>> tileEntityTypeRegister) {
             LOGGER.info("Registering tileEntities");
             tileEntityTypeRegister.getRegistry().registerAll(
-                    TileEntityType.Builder.create(MetaChestTileEntity::new, metaChestBlock).build(null).setRegistryName(metaChestBlock.getRegistryName())
+                    TileEntityType.Builder.create(MetaChestTileEntity::new, metaChestBlock).build(null).setRegistryName(metaChestBlock.getRegistryName()),
+                    TileEntityType.Builder.create(LargeMetaChestTileEntity::new, largeMetaChestBlock).build(null).setRegistryName(largeMetaChestBlock.getRegistryName())
             );
             LOGGER.info("Finished registering tile entities");
         }
@@ -113,7 +140,8 @@ public class MetaChests {
         public static void onContainerRegistry(final RegistryEvent.Register<ContainerType<?>> containerTypeRegister) {
             LOGGER.info("Registering containers");
             containerTypeRegister.getRegistry().registerAll(
-                    IForgeContainerType.create(MetaChestContainer::new).setRegistryName(location("metachest"))
+                    IForgeContainerType.create(MetaChestContainer::new).setRegistryName(location("metachest")),
+                    IForgeContainerType.create(LargeMetaChestContainer::new).setRegistryName(location("largemetachest"))
             );
             LOGGER.info("Finished registering containers");
         }

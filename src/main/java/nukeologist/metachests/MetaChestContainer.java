@@ -25,6 +25,7 @@ import com.google.common.primitives.Ints;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -42,17 +43,33 @@ public class MetaChestContainer extends Container {
 
     private final BlockPos pos;
     private final Vec3d addedPos;
-    private final TileEntity te;
-    private final IItemHandler playerInventory;
     private final PlayerEntity player;
+
+    protected final TileEntity te;
+    protected final IItemHandler playerInventory;
 
     private static final Comparator<ItemStack> COMPARATOR = new ItemStackComparator();
 
     private int tick = 0;
-    private boolean sorted = false;
+    protected boolean sorted = false;
 
     public MetaChestContainer(int windowId, PlayerInventory playerInv, PacketBuffer extraData) {
         this(windowId, playerInv, extraData.readBlockPos());
+    }
+
+    public MetaChestContainer(ContainerType<?> type, int windowId, PlayerInventory playerInv, BlockPos pos) {
+        super(type, windowId);
+        this.pos = pos;
+        this.te = playerInv.player.getEntityWorld().getTileEntity(pos);
+        this.playerInventory = new InvWrapper(playerInv);
+        this.player = playerInv.player;
+        this.addedPos = new Vec3d(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
+
+        //meta chest inventory
+        this.createTileEntitySlots();
+
+        //player
+        this.createPlayerSlots();
     }
 
     public MetaChestContainer(int windowId, PlayerInventory playerInv, BlockPos pos) {
@@ -64,6 +81,13 @@ public class MetaChestContainer extends Container {
         this.addedPos = new Vec3d(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
 
         //meta chest inventory
+        this.createTileEntitySlots();
+
+        //player
+        this.createPlayerSlots();
+    }
+
+    public void createTileEntitySlots() {
         this.te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(inv -> {
             for (int i = 0; i < 5; ++i) {
                 for (int j = 0; j < 9; ++j) {
@@ -77,7 +101,9 @@ public class MetaChestContainer extends Container {
                 }
             }
         });
+    }
 
+    public void createPlayerSlots() {
         //player inventory
         for (int k = 0; k < 3; ++k) {
             for (int i1 = 0; i1 < 9; ++i1) {
@@ -88,6 +114,10 @@ public class MetaChestContainer extends Container {
         for (int k = 0; k < 9; ++k) {
             this.addSlot(new SlotItemHandler(this.playerInventory, k, 9 + k * 18, 171));
         }
+    }
+
+    public int getTeSlotsSize() {
+        return 45;
     }
 
     @Override
@@ -108,7 +138,7 @@ public class MetaChestContainer extends Container {
     //must test to see. (see SortedMultiSet)
     private void sortItems(PlayerEntity player) {
         final int slotLow = 0;
-        final int slotHigh = 45;
+        final int slotHigh = this.getTeSlotsSize();
         final Multiset<ItemStack> itemcounts = getInventoryContent(slotLow, slotHigh, player);
 
         final UnmodifiableIterator<Multiset.Entry<ItemStack>> itemsIterator;

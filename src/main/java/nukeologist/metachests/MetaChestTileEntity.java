@@ -28,6 +28,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -48,10 +49,23 @@ public class MetaChestTileEntity extends TileEntity implements INamedContainerPr
     private final LazyOptional<IItemHandler> INVENTORY;
 
     private ItemGroup itemGroup;
+    private boolean keepContent = false;
+
+    public MetaChestTileEntity(TileEntityType<?> type) {
+        super(type);
+        this.itemHandler = createHandler(SIZE);
+        this.INVENTORY = LazyOptional.of(() -> this.itemHandler);
+    }
 
     public MetaChestTileEntity() {
         super(MetaChests.metaChestTile);
-        this.itemHandler = new ItemStackHandler(SIZE) {
+        this.itemHandler = createHandler(SIZE);
+        this.INVENTORY = LazyOptional.of(() -> this.itemHandler);
+    }
+
+    //This method is where the magic happens. Creates an itemhandler that accepts and maintains itemgroup functionality.
+    public ItemStackHandler createHandler(final int size) {
+        return new ItemStackHandler(size) {
             @Override
             protected void onContentsChanged(int slot) {
                 MetaChestTileEntity.this.markDirty();
@@ -95,31 +109,38 @@ public class MetaChestTileEntity extends TileEntity implements INamedContainerPr
                 }
             }
         };
-        this.INVENTORY = LazyOptional.of(() -> this.itemHandler);
     }
 
     @Override
     public void read(CompoundNBT compound) {
         CompoundNBT invTag = compound.getCompound("inv");
-        itemHandler.deserializeNBT(invTag);
+        this.itemHandler.deserializeNBT(invTag);
+        this.keepContent = compound.getBoolean("keepContent");
         super.read(compound);
         if (this.getItemGroup() == null) {
-            ItemStack stack = this.getStackOfSlots(); //if there is an item here, its item group SHOULD NOT be null.
+            final ItemStack stack = this.getStackOfSlots(); //if there is an item here, its item group SHOULD NOT be null.
             if (!stack.isEmpty()) this.setItemGroup(stack.getItem().getGroup());
         }
     }
 
     @Override
     public CompoundNBT write(CompoundNBT compound) {
-        CompoundNBT invTag = itemHandler.serializeNBT();
+        CompoundNBT invTag = this.itemHandler.serializeNBT();
         compound.put("inv", invTag);
+        compound.putBoolean("keepContent", this.keepContent);
         return super.write(compound);
+    }
+
+    @Override
+    public void remove() {
+        super.remove();
+        this.INVENTORY.invalidate();
     }
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? INVENTORY.cast() : super.getCapability(cap);
+        return cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? INVENTORY.cast() : super.getCapability(cap, side);
     }
 
     @Override
@@ -137,14 +158,22 @@ public class MetaChestTileEntity extends TileEntity implements INamedContainerPr
         return itemGroup;
     }
 
-    public void setItemGroup(ItemGroup itemGroup) {
+    public void setItemGroup(final ItemGroup itemGroup) {
         this.itemGroup = itemGroup;
     }
 
+    public boolean keepsContent() {
+        return this.keepContent;
+    }
+
+    public void setKeepContent(final boolean keepContent) {
+        this.keepContent = keepContent;
+    }
+
     private ItemStack getStackOfSlots() {
-        int slots = itemHandler.getSlots();
+        final int slots = itemHandler.getSlots();
         for (int i = 0; i < slots; i++) {
-            ItemStack stack = itemHandler.getStackInSlot(i);
+            final ItemStack stack = itemHandler.getStackInSlot(i);
             if (!stack.isEmpty())
                 return stack;
         }

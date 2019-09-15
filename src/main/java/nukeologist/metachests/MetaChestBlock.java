@@ -21,18 +21,21 @@
 package nukeologist.metachests;
 
 import net.minecraft.block.*;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.IFluidState;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.pathfinding.PathType;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
+import net.minecraft.stats.Stats;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -47,6 +50,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
 import static net.minecraft.block.ChestBlock.WATERLOGGED;
@@ -76,7 +80,7 @@ public class MetaChestBlock extends Block implements IWaterLoggable {
     @Override
     public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         if (worldIn.isRemote) return true;
-        TileEntity te = worldIn.getTileEntity(pos);
+        final TileEntity te = worldIn.getTileEntity(pos);
         if (te instanceof MetaChestTileEntity) {
             NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) te, buf -> buf.writeBlockPos(pos));
             return true;
@@ -88,7 +92,7 @@ public class MetaChestBlock extends Block implements IWaterLoggable {
     @Override
     public boolean eventReceived(BlockState state, World worldIn, BlockPos pos, int id, int param) {
         super.eventReceived(state, worldIn, pos, id, param);
-        TileEntity tileentity = worldIn.getTileEntity(pos);
+        final TileEntity tileentity = worldIn.getTileEntity(pos);
         return tileentity != null && tileentity.receiveClientEvent(id, param);
     }
 
@@ -96,18 +100,54 @@ public class MetaChestBlock extends Block implements IWaterLoggable {
     @Override
     public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
-            TileEntity tileentity = worldIn.getTileEntity(pos);
+            final TileEntity tileentity = worldIn.getTileEntity(pos);
             if (tileentity instanceof MetaChestTileEntity) {
-                InventoryHelper.dropItems(worldIn, pos, dropItemHandlerContents(tileentity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(() -> new ItemStackHandler()), new Random()));
+                if (!((MetaChestTileEntity) tileentity).keepsContent())
+                    InventoryHelper.dropItems(worldIn, pos, dropItemHandlerContents(tileentity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(() -> new ItemStackHandler()), new Random()));
             }
             super.onReplaced(state, worldIn, pos, newState, isMoving);
         }
+    }
+
+    @Override
+    public void harvestBlock(World worldIn, PlayerEntity player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack stack) {
+        player.addStat(Stats.BLOCK_MINED.get(this));
+        player.addExhaustion(0.005F);
+        if (te instanceof MetaChestTileEntity) {
+            final MetaChestTileEntity meta = (MetaChestTileEntity) te;
+            if (meta.keepsContent()) {
+                meta.setKeepContent(false);
+                CompoundNBT nbt = new CompoundNBT();
+                nbt = meta.write(nbt);
+                final ItemStack is = meta instanceof LargeMetaChestTileEntity ? new ItemStack(MetaChests.largeMetaChestItem) : new ItemStack(MetaChests.metaChestItem);
+                is.setTagInfo("BlockEntityTag", nbt);
+                final ItemEntity itemEntity = new ItemEntity(worldIn, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, is);
+                worldIn.addEntity(itemEntity);
+
+            } else {
+                spawnDrops(state, worldIn, pos, te, player, stack);
+            }
+        }
+    }
+
+    @Override
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        final TileEntity te = worldIn.getTileEntity(pos);
+        if (te instanceof MetaChestTileEntity && placer != null) {
+            if (stack.hasTag()) {
+                te.read(stack.getTag().getCompound("BlockEntityTag"));
+                te.setPos(pos); //when it reads, it reads the old pos.
+            }
+        }
+
     }
 
     /**
      * Get a list of the {@link IItemHandler}'s contents with the stacks randomly split.
      * <p>
      * Adapted from {@link InventoryHelper}.
+     * <p>
+     * Originally from https://github.com/Choonster-Minecraft-Mods/TestMod3/blob/21ca711b2d69c8ba91f88ffc609e0c36e2fa2ac4/src/main/java/choonster/testmod3/util/InventoryUtils.java#L110-L134
      *
      * @param itemHandler The inventory
      * @param random      The Random object
@@ -115,11 +155,9 @@ public class MetaChestBlock extends Block implements IWaterLoggable {
      */
     public static NonNullList<ItemStack> dropItemHandlerContents(IItemHandler itemHandler, Random random) {
         final NonNullList<ItemStack> drops = NonNullList.create();
-
         for (int slot = 0; slot < itemHandler.getSlots(); ++slot) {
             while (!itemHandler.getStackInSlot(slot).isEmpty()) {
                 final int amount = random.nextInt(21) + 10;
-
                 if (!itemHandler.extractItem(slot, amount, true).isEmpty()) {
                     final ItemStack itemStack = itemHandler.extractItem(slot, amount, false);
                     drops.add(itemStack);
@@ -148,8 +186,8 @@ public class MetaChestBlock extends Block implements IWaterLoggable {
 
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        Direction direction = context.getPlacementHorizontalFacing().getOpposite();
-        IFluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
+        final Direction direction = context.getPlacementHorizontalFacing().getOpposite();
+        final IFluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
         return this.getDefaultState().with(FACING, direction).with(WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER);
     }
 

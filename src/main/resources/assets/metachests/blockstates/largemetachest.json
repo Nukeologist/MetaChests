@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "metachests:block/largemetachest" },
+    "facing=south": { "model": "metachests:block/largemetachest", "y": 180 },
+    "facing=west":  { "model": "metachests:block/largemetachest", "y": 270 },
+    "facing=east":  { "model": "metachests:block/largemetachest", "y": 90 }
+  }
+}

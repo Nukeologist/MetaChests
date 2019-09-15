@@ -1,3 +1,14 @@
 {
-  "block.metachests.metachest": "Meta Chest"
+  "block.metachests.metachest":            "Meta Chest",
+  "block.metachests.largemetachest":       "Large Meta Chest",
+
+  "item.metachests.metachestupgrade" :     "Upgrade to Meta Chest",
+  "item.metachests.metachestmetaupgrade":  "Upgrade Meta to Large Meta",
+  "item.metachests.metachestlargeupgrade": "Upgrade to Large Meta Chest",
+  "item.metachests.metachestkeepupgrade":  "Upgrade to keep items",
+
+  "info.metachests.chestupgrade":         "Upgrades a normal chest to a meta chest.",
+  "info.metachests.metaupgrade":          "Makes the Meta Chest have more space.",
+  "info.metachests.chestlargeupgrade":    "Upgrades a normal chest to a large meta chest.",
+  "info.metachests.keepupgrade":          "Makes the meta chest keep contents when broken ONCE."
 }

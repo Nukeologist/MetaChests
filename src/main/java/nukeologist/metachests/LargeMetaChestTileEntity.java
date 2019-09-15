@@ -20,14 +20,29 @@
 
 package nukeologist.metachests;
 
-import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraftforge.items.ItemStackHandler;
 
-public enum ClientHandler {
+import javax.annotation.Nullable;
 
-    INSTANCE;
+public class LargeMetaChestTileEntity extends MetaChestTileEntity {
 
-    public void init() {
-        ScreenManager.registerFactory(MetaChests.metaChestContainer, MetaChestScreen::new);
-        ScreenManager.registerFactory(MetaChests.largeMetaChestContainer, LargeMetaChestScreen::new);
+    private static final int SIZE = 91;
+
+    public LargeMetaChestTileEntity() {
+        super(MetaChests.largeMetaChestTile);
+    }
+
+    @Override
+    public ItemStackHandler createHandler(final int size) {
+        return super.createHandler(SIZE);
+    }
+
+    @Nullable
+    @Override
+    public Container createMenu(int id, PlayerInventory playerInv, PlayerEntity player) {
+        return new LargeMetaChestContainer(id, playerInv, this.getPos());
     }
 }
