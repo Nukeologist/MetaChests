@@ -18,13 +18,14 @@
  *
  */
 
-package nukeologist.metachests;
+package nukeologist.metachests.container;
 
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import nukeologist.metachests.MetaChests;
 
 public class LargeMetaChestContainer extends MetaChestContainer {
 

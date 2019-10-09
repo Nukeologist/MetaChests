@@ -18,7 +18,7 @@
  *
  */
 
-package nukeologist.metachests;
+package nukeologist.metachests.item;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;

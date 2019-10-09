@@ -18,12 +18,14 @@
  *
  */
 
-package nukeologist.metachests;
+package nukeologist.metachests.tiles;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraftforge.items.ItemStackHandler;
+import nukeologist.metachests.container.LargeMetaChestContainer;
+import nukeologist.metachests.MetaChests;
 
 import javax.annotation.Nullable;
 

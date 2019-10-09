@@ -18,16 +18,21 @@
  *
  */
 
-package nukeologist.metachests;
+package nukeologist.metachests.block;
 
-import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.block.BlockState;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.IBlockReader;
+import nukeologist.metachests.tiles.LargeMetaChestTileEntity;
 
-public enum ClientHandler {
+public class LargeMetaChestBlock extends MetaChestBlock {
 
-    INSTANCE;
+    public LargeMetaChestBlock(Properties properties) {
+        super(properties);
+    }
 
-    public void init() {
-        ScreenManager.registerFactory(MetaChests.metaChestContainer, MetaChestScreen::new);
-        ScreenManager.registerFactory(MetaChests.largeMetaChestContainer, LargeMetaChestScreen::new);
+    @Override
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+        return new LargeMetaChestTileEntity();
     }
 }

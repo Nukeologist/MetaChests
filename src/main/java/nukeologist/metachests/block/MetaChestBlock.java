@@ -18,7 +18,7 @@
  *
  */
 
-package nukeologist.metachests;
+package nukeologist.metachests.block;
 
 import net.minecraft.block.*;
 import net.minecraft.entity.LivingEntity;
@@ -49,6 +49,9 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import nukeologist.metachests.tiles.LargeMetaChestTileEntity;
+import nukeologist.metachests.tiles.MetaChestTileEntity;
+import nukeologist.metachests.MetaChests;
 
 import javax.annotation.Nullable;
 import java.util.Random;

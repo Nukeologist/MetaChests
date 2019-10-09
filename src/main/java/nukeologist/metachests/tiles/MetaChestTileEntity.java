@@ -18,7 +18,7 @@
  *
  */
 
-package nukeologist.metachests;
+package nukeologist.metachests.tiles;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -37,6 +37,8 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import nukeologist.metachests.container.MetaChestContainer;
+import nukeologist.metachests.MetaChests;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -58,9 +60,7 @@ public class MetaChestTileEntity extends TileEntity implements INamedContainerPr
     }
 
     public MetaChestTileEntity() {
-        super(MetaChests.metaChestTile);
-        this.itemHandler = createHandler(SIZE);
-        this.INVENTORY = LazyOptional.of(() -> this.itemHandler);
+        this(MetaChests.metaChestTile);
     }
 
     //This method is where the magic happens. Creates an itemhandler that accepts and maintains itemgroup functionality.

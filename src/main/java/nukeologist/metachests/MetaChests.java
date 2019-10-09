@@ -43,6 +43,15 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ObjectHolder;
+import nukeologist.metachests.block.LargeMetaChestBlock;
+import nukeologist.metachests.block.MetaChestBlock;
+import nukeologist.metachests.client.ClientHandler;
+import nukeologist.metachests.container.LargeMetaChestContainer;
+import nukeologist.metachests.container.MetaChestContainer;
+import nukeologist.metachests.item.Upgrade;
+import nukeologist.metachests.item.UpgradeItem;
+import nukeologist.metachests.tiles.LargeMetaChestTileEntity;
+import nukeologist.metachests.tiles.MetaChestTileEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -78,7 +87,7 @@ public class MetaChests {
 
     public MetaChests() {
         // Register the setup method for modloading
-        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         modBus.addListener(this::setup);
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);

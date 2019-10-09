@@ -18,7 +18,7 @@
  *
  */
 
-package nukeologist.metachests;
+package nukeologist.metachests.item;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -38,6 +38,9 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
+import nukeologist.metachests.MetaChests;
+import nukeologist.metachests.block.MetaChestBlock;
+import nukeologist.metachests.tiles.MetaChestTileEntity;
 
 import java.util.function.BiFunction;
 

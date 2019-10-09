@@ -18,7 +18,7 @@
  *
  */
 
-package nukeologist.metachests;
+package nukeologist.metachests.container;
 
 import com.google.common.collect.*;
 import com.google.common.primitives.Ints;
@@ -36,6 +36,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import nukeologist.metachests.MetaChests;
 
 import java.util.Comparator;
 

@@ -18,7 +18,7 @@
  *
  */
 
-package nukeologist.metachests;
+package nukeologist.metachests.client;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -44,6 +44,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
+import nukeologist.metachests.container.MetaChestContainer;
 
 import java.util.*;
 import java.util.function.Predicate;
