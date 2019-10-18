@@ -45,6 +45,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ObjectHolder;
 import nukeologist.metachests.block.LargeMetaChestBlock;
 import nukeologist.metachests.block.MetaChestBlock;
+import nukeologist.metachests.block.MetaConnectorBlock;
 import nukeologist.metachests.client.ClientHandler;
 import nukeologist.metachests.container.LargeMetaChestContainer;
 import nukeologist.metachests.container.MetaChestContainer;
@@ -52,6 +53,7 @@ import nukeologist.metachests.item.Upgrade;
 import nukeologist.metachests.item.UpgradeItem;
 import nukeologist.metachests.tiles.LargeMetaChestTileEntity;
 import nukeologist.metachests.tiles.MetaChestTileEntity;
+import nukeologist.metachests.tiles.MetaConnectorTileEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -67,11 +69,17 @@ public class MetaChests {
     @ObjectHolder(MODID + ":largemetachest")
     public static Block largeMetaChestBlock;
 
+    @ObjectHolder(MODID + ":metaconnector")
+    public static Block metaConnectorBlock;
+
     @ObjectHolder(MODID + ":metachest")
     public static TileEntityType metaChestTile;
 
     @ObjectHolder(MODID + ":largemetachest")
     public static TileEntityType largeMetaChestTile;
+
+    @ObjectHolder(MODID + ":metaconnector")
+    public static TileEntityType metaConnectorTile;
 
     @ObjectHolder(MODID + ":metachest")
     public static ContainerType metaChestContainer;
@@ -114,7 +122,8 @@ public class MetaChests {
             final Block.Properties PROPERTIES = Block.Properties.create(Material.WOOD).hardnessAndResistance(3.0F, 3.0F).harvestTool(ToolType.AXE).sound(SoundType.WOOD);
             blockRegistryEvent.getRegistry().registerAll(
                     new MetaChestBlock(PROPERTIES).setRegistryName(location("metachest")),
-                    new LargeMetaChestBlock(PROPERTIES).setRegistryName(location("largemetachest"))
+                    new LargeMetaChestBlock(PROPERTIES).setRegistryName(location("largemetachest")),
+                    new MetaConnectorBlock(Block.Properties.create(Material.IRON).harvestTool(ToolType.PICKAXE).hardnessAndResistance(4.0F).sound(SoundType.METAL)).setRegistryName(location("metaconnector"))
             );
             LOGGER.info("Finished registering blocks");
         }
@@ -127,6 +136,7 @@ public class MetaChests {
             itemRegistryEvent.getRegistry().registerAll(
                     new BlockItem(metaChestBlock, DECO).setRegistryName(location("metachest")),
                     new BlockItem(largeMetaChestBlock, DECO).setRegistryName(location("largemetachest")),
+                    new BlockItem(metaConnectorBlock, DECO).setRegistryName(location("metaconnector")),
                     new UpgradeItem(UPGRADES, Upgrade.CHEST_TO_META).setRegistryName(location("metachestupgrade")),
                     new UpgradeItem(UPGRADES, Upgrade.META_TO_LARGE_META).setRegistryName(location("metachestmetaupgrade")),
                     new UpgradeItem(UPGRADES, Upgrade.CHEST_TO_LARGE_META).setRegistryName(location("metachestlargeupgrade")),
@@ -140,7 +150,8 @@ public class MetaChests {
             LOGGER.info("Registering tileEntities");
             tileEntityTypeRegister.getRegistry().registerAll(
                     TileEntityType.Builder.create(MetaChestTileEntity::new, metaChestBlock).build(null).setRegistryName(metaChestBlock.getRegistryName()),
-                    TileEntityType.Builder.create(LargeMetaChestTileEntity::new, largeMetaChestBlock).build(null).setRegistryName(largeMetaChestBlock.getRegistryName())
+                    TileEntityType.Builder.create(LargeMetaChestTileEntity::new, largeMetaChestBlock).build(null).setRegistryName(largeMetaChestBlock.getRegistryName()),
+                    TileEntityType.Builder.create(MetaConnectorTileEntity::new, metaConnectorBlock).build(null).setRegistryName(metaConnectorBlock.getRegistryName())
             );
             LOGGER.info("Finished registering tile entities");
         }

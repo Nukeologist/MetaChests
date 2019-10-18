@@ -18,32 +18,30 @@
  *
  */
 
-package nukeologist.metachests.tiles;
+package nukeologist.metachests.block;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import nukeologist.metachests.container.LargeMetaChestContainer;
-import nukeologist.metachests.MetaChests;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.IBlockReader;
+import nukeologist.metachests.tiles.MetaConnectorTileEntity;
 
 import javax.annotation.Nullable;
 
-public class LargeMetaChestTileEntity extends MetaChestTileEntity {
+public class MetaConnectorBlock extends Block {
 
-    private static final int SIZE = 91;
-
-    public LargeMetaChestTileEntity() {
-        super(MetaChests.largeMetaChestTile);
+    public MetaConnectorBlock(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public int getSize() {
-        return SIZE;
+    public boolean hasTileEntity(BlockState state) {
+        return true;
     }
 
     @Nullable
     @Override
-    public Container createMenu(int id, PlayerInventory playerInv, PlayerEntity player) {
-        return new LargeMetaChestContainer(id, playerInv, this.getPos());
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+        return new MetaConnectorTileEntity();
     }
 }
