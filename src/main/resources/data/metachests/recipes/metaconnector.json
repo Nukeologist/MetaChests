@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#I#",
+    "#A#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "tag": "forge:ingots/iron"
+    },
+    "A": {
+      "item": "metachests:largemetachest"
+    },
+    "I": {
+      "tag": "forge:gems/emerald"
+    }
+  },
+  "result": {
+    "item": "metachests:metaconnector"
+  }
+}

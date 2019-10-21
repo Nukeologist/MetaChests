@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "metachests:block/metaconnector" }
+  }
+}

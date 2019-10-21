@@ -1,6 +1,7 @@
 {
   "block.metachests.metachest":            "Meta Chest",
   "block.metachests.largemetachest":       "Large Meta Chest",
+  "block.metachests.metaconnector":        "Meta Connector",
 
   "item.metachests.metachestupgrade" :     "Upgrade to Meta Chest",
   "item.metachests.metachestmetaupgrade":  "Upgrade Meta to Large Meta",

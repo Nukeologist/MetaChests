@@ -1,6 +1,7 @@
 {
   "block.metachests.metachest":            "Baú Meta",
   "block.metachests.largemetachest":       "Baú Meta Grande",
+  "block.metachests.metaconnector":        "Conector Meta",
 
   "item.metachests.metachestupgrade" :     "Melhoria para Baú Meta",
   "item.metachests.metachestmetaupgrade":  "Melhoria de Meta para Meta Grande",

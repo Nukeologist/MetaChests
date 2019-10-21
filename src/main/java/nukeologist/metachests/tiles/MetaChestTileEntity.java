@@ -55,7 +55,7 @@ public class MetaChestTileEntity extends TileEntity implements INamedContainerPr
 
     public MetaChestTileEntity(TileEntityType<?> type) {
         super(type);
-        this.itemHandler = createHandler(SIZE);
+        this.itemHandler = createHandler();
         this.INVENTORY = LazyOptional.of(() -> this.itemHandler);
     }
 
@@ -64,8 +64,8 @@ public class MetaChestTileEntity extends TileEntity implements INamedContainerPr
     }
 
     //This method is where the magic happens. Creates an itemhandler that accepts and maintains itemgroup functionality.
-    public ItemStackHandler createHandler(final int size) {
-        return new ItemStackHandler(size) {
+    public ItemStackHandler createHandler() {
+        return new ItemStackHandler(getSize()) {
             @Override
             protected void onContentsChanged(int slot) {
                 MetaChestTileEntity.this.markDirty();
@@ -178,5 +178,9 @@ public class MetaChestTileEntity extends TileEntity implements INamedContainerPr
                 return stack;
         }
         return ItemStack.EMPTY;
+    }
+
+    public int getSize() {
+        return SIZE;
     }
 }
