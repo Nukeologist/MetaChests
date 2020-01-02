@@ -22,7 +22,7 @@ package nukeologist.metachests.client;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.resources.I18n;
@@ -101,16 +101,16 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
         this.container.inventorySlots.forEach(slot -> {
             if (!itemList.contains(slot.getStack().getItem())) {
                 int slotColor;
-                GlStateManager.disableLighting();
-                GlStateManager.disableDepthTest();
+                //RenderSystem.disableLighting(); Was here in 1.14
+                RenderSystem.disableDepthTest();
                 int j1 = slot.xPos + this.guiLeft;
                 int k1 = slot.yPos + this.guiTop;
-                GlStateManager.colorMask(true, true, true, false);
+                RenderSystem.colorMask(true, true, true, false);
                 slotColor = this.getSlotColor(slot.slotNumber);
                 this.fillGradient(j1, k1, j1 + 16, k1 + 16, slotColor, slotColor);
-                GlStateManager.colorMask(true, true, true, true);
-                GlStateManager.enableLighting();
-                GlStateManager.enableDepthTest();
+                RenderSystem.colorMask(true, true, true, true);
+                //RenderSystem.enableLighting(); Was here in 1.14
+                RenderSystem.enableDepthTest();
             }
         });
 
@@ -228,7 +228,7 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.minecraft.getTextureManager().bindTexture(GUI);
         this.blit(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
         this.searchField.render(mouseX, mouseY, partialTicks);

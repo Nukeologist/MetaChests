@@ -14,7 +14,7 @@ apply plugin: 'maven-publish'
 
 version = '1.4.0'
 group = 'nukeologist.metachests' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'MetaChests-1.14.4'
+archivesBaseName = 'MetaChests-1.15.1'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
@@ -85,10 +85,10 @@ repositories {
 
 dependencies {
 
-    minecraft 'net.minecraftforge:forge:1.14.4-28.1.76'
+    minecraft 'net.minecraftforge:forge:1.15.1-30.0.20'
 
-    compile fg.deobf('mezz.jei:jei-1.14.4:+')
-    compile fg.deobf('mcp.mobius.waila:Hwyla:1.10+')
+    //compile fg.deobf('mezz.jei:jei-1.14.4:+')
+    //compile fg.deobf('mcp.mobius.waila:Hwyla:1.10+')
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
