@@ -22,7 +22,7 @@ displayName="Meta Chests" #mandatory
 # A URL for the "homepage" for this mod, displayed in the mod UI
 displayURL="https://github.com/Nukeologist/MetaChests" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
-logoFile="" #optional
+#logoFile="" #optional
 # A text field displayed in the mod UI
 credits="Thanks for the people making forge" #optional
 # A text field displayed in the mod UI
