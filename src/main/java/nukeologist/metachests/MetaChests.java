@@ -107,12 +107,6 @@ public class MetaChests {
         LOGGER.info("Finished registering gui.");
     }
 
-    @SubscribeEvent
-    public void onServerStarting(final FMLServerStartingEvent event) {
-        // do something when the server starts
-        LOGGER.info("HELLO from server starting");
-    }
-
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistryEvents {
 

@@ -81,14 +81,14 @@ public class MetaChestBlock extends Block implements IWaterLoggable {
 
     @SuppressWarnings("deprecation")
     @Override
-    public ActionResultType func_225533_a_(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-        if (worldIn.isRemote) return ActionResultType.PASS;
+    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+        if (worldIn.isRemote) return ActionResultType.SUCCESS;
         final TileEntity te = worldIn.getTileEntity(pos);
         if (te instanceof MetaChestTileEntity) {
             NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) te, buf -> buf.writeBlockPos(pos));
             return ActionResultType.SUCCESS;
         }
-        return super.func_225533_a_(state, worldIn, pos, player, handIn, hit);
+        return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
     }
 
     @SuppressWarnings("deprecation")

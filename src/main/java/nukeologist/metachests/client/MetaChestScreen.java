@@ -204,9 +204,9 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
         }
 
         net.minecraft.client.gui.FontRenderer font = stack.getItem().getFontRenderer(stack);
-        net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(stack);
+        net.minecraftforge.fml.client.gui.GuiUtils.preItemToolTip(stack);
         this.renderTooltip(list1, p_renderTooltip_2_, p_renderTooltip_3_, (font == null ? this.font : font));
-        net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
+        net.minecraftforge.fml.client.gui.GuiUtils.postItemToolTip();
 
     }
 
