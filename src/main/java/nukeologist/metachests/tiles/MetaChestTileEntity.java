@@ -20,6 +20,7 @@
 
 package nukeologist.metachests.tiles;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -112,11 +113,11 @@ public class MetaChestTileEntity extends TileEntity implements INamedContainerPr
     }
 
     @Override
-    public void read(CompoundNBT compound) {
+    public void func_230337_a_(BlockState useless, CompoundNBT compound) {
         CompoundNBT invTag = compound.getCompound("inv");
         this.itemHandler.deserializeNBT(invTag);
         this.keepContent = compound.getBoolean("keepContent");
-        super.read(compound);
+        super.func_230337_a_(useless, compound);
         if (this.getItemGroup() == null) {
             final ItemStack stack = this.getStackOfSlots(); //if there is an item here, its item group SHOULD NOT be null.
             if (!stack.isEmpty()) this.setItemGroup(stack.getItem().getGroup());

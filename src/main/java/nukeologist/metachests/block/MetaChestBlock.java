@@ -26,7 +26,7 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
@@ -138,7 +138,7 @@ public class MetaChestBlock extends Block implements IWaterLoggable {
         final TileEntity te = worldIn.getTileEntity(pos);
         if (te instanceof MetaChestTileEntity && placer != null) {
             if (stack.hasTag()) {
-                te.read(stack.getTag().getCompound("BlockEntityTag"));
+                te.func_230337_a_(state, stack.getTag().getCompound("BlockEntityTag"));
                 te.setPos(pos); //when it reads, it reads the old pos.
             }
         }
@@ -190,13 +190,13 @@ public class MetaChestBlock extends Block implements IWaterLoggable {
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
         final Direction direction = context.getPlacementHorizontalFacing().getOpposite();
-        final IFluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
+        final FluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
         return this.getDefaultState().with(FACING, direction).with(WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER);
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public IFluidState getFluidState(BlockState state) {
+    public FluidState getFluidState(BlockState state) {
         return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
     }
 

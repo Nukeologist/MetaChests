@@ -20,6 +20,7 @@
 
 package nukeologist.metachests.client;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
@@ -39,15 +40,15 @@ public class LargeMetaChestScreen extends MetaChestScreen {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    protected void func_230450_a_(MatrixStack matrix, float partialTicks, int mouseX, int mouseY) {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bindTexture(GUI);
-        this.blit(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-        this.searchField.render(mouseX, mouseY, partialTicks);
+        this.getMinecraft().getTextureManager().bindTexture(GUI);
+        this.func_238474_b_(matrix, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+        this.searchField.func_230430_a_(matrix, mouseX, mouseY, partialTicks);
     }
 
     @Override
     protected int getSearchX() {
-        return this.guiLeft + (171 /*new left*/ + 65 /*default width*/) - this.searchField.getWidth();
+        return this.guiLeft + (171 /*new left*/ + 65 /*default width*/) - this.searchField.func_230998_h_();
     }
 }

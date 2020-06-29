@@ -14,12 +14,12 @@ apply plugin: 'maven-publish'
 
 version = '1.4.2'
 group = 'nukeologist.metachests' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'MetaChests-1.15.2'
+archivesBaseName = 'MetaChests-1.16.1'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
-    mappings channel: 'snapshot', version: '20200307-1.15.1'
+    mappings channel: 'snapshot', version: '20200514-1.16'
 
     runs {
         client {
@@ -85,7 +85,7 @@ repositories {
 
 dependencies {
 
-    minecraft 'net.minecraftforge:forge:1.15.2-31.1.18'
+    minecraft 'net.minecraftforge:forge:1.16.1-32.0.25'
 
     //compile fg.deobf('mezz.jei:jei-1.14.4:+')
     //compile fg.deobf('mcp.mobius.waila:Hwyla:1.10+')

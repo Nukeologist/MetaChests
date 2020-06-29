@@ -22,6 +22,7 @@ package nukeologist.metachests.client;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -37,13 +38,15 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagCollection;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import nukeologist.metachests.container.MetaChestContainer;
 
 import java.util.*;
@@ -58,7 +61,7 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
 
     //taken from creative tab
     protected TextFieldWidget searchField;
-    private final Map<ResourceLocation, Tag<Item>> tagSearchResults = Maps.newTreeMap();
+    private final Map<ResourceLocation, ITag<Item>> tagSearchResults = Maps.newTreeMap();
     private ItemGroup group;
     private boolean field_195377_F;
 
@@ -71,32 +74,37 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
     }
 
     @Override
-    protected void init() {
-        super.init();
-        this.searchField = new TextFieldWidget(this.font, this.guiLeft + 100, this.guiTop + 6, 70, 9, I18n.format("itemGroup.search"));
+    protected void func_231160_c_() {
+        super.func_231160_c_();
+        this.searchField = new TextFieldWidget(this.field_230712_o_, this.guiLeft + 100, this.guiTop + 6, 70, 9, new TranslationTextComponent("itemGroup.search"));
         this.searchField.setMaxStringLength(50);
         this.searchField.setEnableBackgroundDrawing(false);
         this.searchField.setVisible(true);
         this.searchField.setCanLoseFocus(false);
         this.searchField.setFocused2(true);
         this.searchField.setTextColor(16777215);
-        this.searchField.setWidth(65); //default 89
-        this.searchField.x = getSearchX();
-        this.children.add(this.searchField);
+        this.searchField.func_230991_b_(65); //default 89
+        this.searchField.field_230690_l_  = getSearchX();
+        this.field_230705_e_.add(this.searchField);
         this.group = this.getItemGroup();
     }
 
+    @Override
+    protected void func_230451_b_(MatrixStack p_230451_1_, int p_230451_2_, int p_230451_3_) {
+        //do not draw title
+    }
+
     protected int getSearchX() {
-        return this.guiLeft + (100 /*default left*/ + 65 /*default width*/) - this.searchField.getWidth();
+        return this.guiLeft + (100 /*default left*/ + 65 /*default width*/) - this.searchField.func_230998_h_();
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public void func_231023_e_() {
+        super.func_231023_e_();
         this.searchField.tick();
     }
 
-    private void highLightSlots() {
+    private void highLightSlots(MatrixStack matrix) {
         final List<Item> itemList = searchedStacks.stream().map(ItemStack::getItem).collect(Collectors.toList());
         this.container.inventorySlots.forEach(slot -> {
             if (!itemList.contains(slot.getStack().getItem())) {
@@ -107,7 +115,7 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
                 int k1 = slot.yPos + this.guiTop;
                 RenderSystem.colorMask(true, true, true, false);
                 slotColor = this.getSlotColor(slot.slotNumber);
-                this.fillGradient(j1, k1, j1 + 16, k1 + 16, slotColor, slotColor);
+                this.func_238468_a_(matrix, j1, k1, j1 + 16, k1 + 16, slotColor, slotColor);
                 RenderSystem.colorMask(true, true, true, true);
                 //RenderSystem.enableLighting(); Was here in 1.14
                 RenderSystem.enableDepthTest();
@@ -117,22 +125,22 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
     }
 
     @Override
-    public boolean charTyped(char p_charTyped_1_, int p_charTyped_2_) {
+    public boolean func_231042_a_(char p_charTyped_1_, int p_charTyped_2_) {
         if (this.field_195377_F) {
             return false;
         }
         String s = this.searchField.getText();
-        if (this.searchField.charTyped(p_charTyped_1_, p_charTyped_2_)) {
+        if (this.searchField.func_231042_a_(p_charTyped_1_, p_charTyped_2_)) {
             if (!Objects.equals(s, this.searchField.getText())) {
                 this.updateCreativeSearch();
             }
             return true;
         }
-        return super.charTyped(p_charTyped_1_, p_charTyped_2_);
+        return super.func_231042_a_(p_charTyped_1_, p_charTyped_2_);
     }
 
     @Override
-    public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
+    public boolean func_231046_a_(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
         this.field_195377_F = false;
         //boolean flag = !this.hasTmpInventory(this.hoveredSlot) || this.hoveredSlot != null && this.hoveredSlot.getHasStack();
         boolean flag = this.hoveredSlot != null && this.hoveredSlot.getHasStack();
@@ -141,14 +149,14 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
             return true;
         } else {
             String s = this.searchField.getText();
-            if (this.searchField.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_)) {
+            if (this.searchField.func_231046_a_(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_)) {
                 if (!Objects.equals(s, this.searchField.getText())) {
                     this.updateCreativeSearch();
                 }
 
                 return true;
             } else {
-                return this.searchField.isFocused() && this.searchField.getVisible() && p_keyPressed_1_ != 256 || super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
+                return this.searchField.func_230999_j_() && this.searchField.getVisible() && p_keyPressed_1_ != 256 || super.func_231046_a_(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
             }
         }
         //return super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
@@ -161,24 +169,19 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
     }
 
     @Override   //copied
-    protected void renderTooltip(ItemStack stack, int p_renderTooltip_2_, int p_renderTooltip_3_) {
-        List<ITextComponent> list = stack.getTooltip(this.minecraft.player, this.minecraft.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
-        List<String> list1 = Lists.newArrayListWithCapacity(list.size());
-
-        for (ITextComponent itextcomponent : list) {
-            list1.add(itextcomponent.getFormattedText());
-        }
-
+    protected void func_230457_a_(MatrixStack matrix, ItemStack stack, int p_renderTooltip_2_, int p_renderTooltip_3_) {
+        List<ITextComponent> list = stack.getTooltip(this.field_230706_i_.player, this.field_230706_i_.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
+        List<ITextComponent> list1 = Lists.newArrayList(list);
         Item item = stack.getItem();
-        ItemGroup itemgroup1 = item.getGroup();
-        if (itemgroup1 == null && item == Items.ENCHANTED_BOOK) {
+        ItemGroup itemgroup = item.getGroup();
+        if (itemgroup == null && item == Items.ENCHANTED_BOOK) {
             Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(stack);
             if (map.size() == 1) {
                 Enchantment enchantment = map.keySet().iterator().next();
 
-                for (ItemGroup itemgroup : ItemGroup.GROUPS) {
-                    if (itemgroup.hasRelevantEnchantmentType(enchantment.type)) {
-                        itemgroup1 = itemgroup;
+                for(ItemGroup itemgroup1 : ItemGroup.GROUPS) {
+                    if (itemgroup1.hasRelevantEnchantmentType(enchantment.type)) {
+                        itemgroup = itemgroup1;
                         break;
                     }
                 }
@@ -186,58 +189,50 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
         }
 
         this.tagSearchResults.forEach((p_214083_2_, p_214083_3_) -> {
-            if (p_214083_3_.contains(item)) {
-                list1.add(1, "" + TextFormatting.BOLD + TextFormatting.DARK_PURPLE + "#" + p_214083_2_);
+            if (p_214083_3_.func_230235_a_(item)) {
+                list1.add(1, (new StringTextComponent("#" + p_214083_2_)).func_240699_a_(TextFormatting.DARK_PURPLE));
             }
 
         });
-        if (itemgroup1 != null) {
-            list1.add(1, "" + TextFormatting.BOLD + TextFormatting.BLUE + I18n.format(itemgroup1.getTranslationKey()));
-        }
-
-        for (int i = 0; i < list1.size(); ++i) {
-            if (i == 0) {
-                list1.set(i, stack.getRarity().color + list1.get(i));
-            } else {
-                list1.set(i, TextFormatting.GRAY + list1.get(i));
-            }
+        if (itemgroup != null) {
+            list1.add(1, (new TranslationTextComponent(itemgroup.getTranslationKey())).func_240699_a_(TextFormatting.BLUE));
         }
 
         net.minecraft.client.gui.FontRenderer font = stack.getItem().getFontRenderer(stack);
         net.minecraftforge.fml.client.gui.GuiUtils.preItemToolTip(stack);
-        this.renderTooltip(list1, p_renderTooltip_2_, p_renderTooltip_3_, (font == null ? this.font : font));
+        this.func_238654_b_(matrix, list1, p_renderTooltip_2_, p_renderTooltip_3_, (font == null ? this.field_230712_o_ : font));
         net.minecraftforge.fml.client.gui.GuiUtils.postItemToolTip();
 
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground();
+    public void func_230430_a_ (MatrixStack matrix, int mouseX, int mouseY, float partialTicks) {
+        this.func_230446_a_(matrix);
 
-        super.render(mouseX, mouseY, partialTicks);
+        super.func_230430_a_ (matrix, mouseX, mouseY, partialTicks);
         if (!this.searchField.getText().isEmpty()) {
-            this.highLightSlots();
+            this.highLightSlots(matrix);
         }
         this.getItemGroup();
         if (this.group != null) {
-            this.font.drawString(I18n.format(this.group.getTranslationKey()), this.guiLeft + 4, this.guiTop + 6, 4210752);
+            this.field_230712_o_.func_238421_b_(matrix, I18n.format(this.group.getTranslationKey()), this.guiLeft + 4, this.guiTop + 6, 4210752);
         }
-        this.renderHoveredToolTip(mouseX, mouseY);
+        this.func_230459_a_(matrix, mouseX, mouseY);
 
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    protected void func_230450_a_(MatrixStack matrix, float partialTicks, int mouseX, int mouseY) {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bindTexture(GUI);
-        this.blit(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-        this.searchField.render(mouseX, mouseY, partialTicks);
+        this.getMinecraft().getTextureManager().bindTexture(GUI);
+        this.func_238474_b_(matrix, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+        this.searchField.func_230430_a_ (matrix, mouseX, mouseY, partialTicks);
     }
 
-    @Override
-    public boolean isPauseScreen() {
-        return false;
-    }
+    //@Override
+    //public boolean isPauseScreen() {
+    //    return false;
+    //}
 
     //copied and modified
     private void updateCreativeSearch() {
@@ -250,10 +245,10 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
             ISearchTree<ItemStack> isearchtree;
             if (s.startsWith("#")) {
                 s = s.substring(1);
-                isearchtree = this.minecraft.getSearchTree(SearchTreeManager.TAGS);
+                isearchtree = this.getMinecraft().getSearchTree(SearchTreeManager.TAGS);
                 this.searchTags(s);
             } else {
-                isearchtree = this.minecraft.getSearchTree(SearchTreeManager.ITEMS);
+                isearchtree = this.getMinecraft().getSearchTree(SearchTreeManager.ITEMS);
             }
 
             searchedStacks.addAll(isearchtree.search(s.toLowerCase(Locale.ROOT)));
@@ -282,14 +277,14 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
         int i = search.indexOf(58);
         Predicate<ResourceLocation> predicate;
         if (i == -1) {
-            predicate = (rs) -> rs.getPath().contains(search);
+            predicate = (p_214084_1_) -> p_214084_1_.getPath().contains(search);
         } else {
             String s = search.substring(0, i).trim();
             String s1 = search.substring(i + 1).trim();
-            predicate = (rs) -> rs.getNamespace().contains(s) && rs.getPath().contains(s1);
+            predicate = (p_214081_2_) -> p_214081_2_.getNamespace().contains(s) && p_214081_2_.getPath().contains(s1);
         }
 
         TagCollection<Item> tagcollection = ItemTags.getCollection();
-        tagcollection.getRegisteredTags().stream().filter(predicate).forEach((rs) -> this.tagSearchResults.put(rs, tagcollection.get(rs)));
+        tagcollection.getRegisteredTags().stream().filter(predicate).forEach((p_214082_2_) -> this.tagSearchResults.put(p_214082_2_, tagcollection.get(p_214082_2_)));
     }
 }

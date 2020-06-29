@@ -31,7 +31,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -43,7 +43,7 @@ import java.util.Comparator;
 public class MetaChestContainer extends Container {
 
     private final BlockPos pos;
-    private final Vec3d addedPos;
+    private final Vector3d addedPos;
     private final PlayerEntity player;
 
     protected final TileEntity te;
@@ -64,7 +64,7 @@ public class MetaChestContainer extends Container {
         this.te = playerInv.player.getEntityWorld().getTileEntity(pos);
         this.playerInventory = new InvWrapper(playerInv);
         this.player = playerInv.player;
-        this.addedPos = new Vec3d(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
+        this.addedPos = new Vector3d(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
 
         //meta chest inventory
         this.createTileEntitySlots();
@@ -79,7 +79,7 @@ public class MetaChestContainer extends Container {
         this.te = playerInv.player.getEntityWorld().getTileEntity(pos);
         this.playerInventory = new InvWrapper(playerInv);
         this.player = playerInv.player;
-        this.addedPos = new Vec3d(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
+        this.addedPos = new Vector3d(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
 
         //meta chest inventory
         this.createTileEntitySlots();
