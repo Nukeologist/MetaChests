@@ -113,11 +113,11 @@ public class MetaChestTileEntity extends TileEntity implements INamedContainerPr
     }
 
     @Override
-    public void func_230337_a_(BlockState useless, CompoundNBT compound) {
+    public void read(BlockState useless, CompoundNBT compound) {
         CompoundNBT invTag = compound.getCompound("inv");
         this.itemHandler.deserializeNBT(invTag);
         this.keepContent = compound.getBoolean("keepContent");
-        super.func_230337_a_(useless, compound);
+        super.read(useless, compound);
         if (this.getItemGroup() == null) {
             final ItemStack stack = this.getStackOfSlots(); //if there is an item here, its item group SHOULD NOT be null.
             if (!stack.isEmpty()) this.setItemGroup(stack.getItem().getGroup());

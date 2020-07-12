@@ -19,7 +19,7 @@ archivesBaseName = 'MetaChests-1.16.1'
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
-    mappings channel: 'snapshot', version: '20200514-1.16'
+    mappings channel: 'snapshot', version: '20200707-1.16.1'
 
     runs {
         client {
@@ -85,7 +85,7 @@ repositories {
 
 dependencies {
 
-    minecraft 'net.minecraftforge:forge:1.16.1-32.0.25'
+    minecraft 'net.minecraftforge:forge:1.16.1-32.0.63'
 
     //compile fg.deobf('mezz.jei:jei-1.14.4:+')
     //compile fg.deobf('mcp.mobius.waila:Hwyla:1.10+')

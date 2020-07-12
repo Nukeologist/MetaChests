@@ -74,18 +74,18 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
     }
 
     @Override
-    protected void func_231160_c_() {
-        super.func_231160_c_();
-        this.searchField = new TextFieldWidget(this.field_230712_o_, this.guiLeft + 100, this.guiTop + 6, 70, 9, new TranslationTextComponent("itemGroup.search"));
+    protected void init() {
+        super.init();
+        this.searchField = new TextFieldWidget(this.font, this.guiLeft + 100, this.guiTop + 6, 70, 9, new TranslationTextComponent("itemGroup.search"));
         this.searchField.setMaxStringLength(50);
         this.searchField.setEnableBackgroundDrawing(false);
         this.searchField.setVisible(true);
         this.searchField.setCanLoseFocus(false);
         this.searchField.setFocused2(true);
         this.searchField.setTextColor(16777215);
-        this.searchField.func_230991_b_(65); //default 89
-        this.searchField.field_230690_l_  = getSearchX();
-        this.field_230705_e_.add(this.searchField);
+        this.searchField.setWidth(65); //default 89
+        this.searchField.x = getSearchX();
+        this.children.add(this.searchField);
         this.group = this.getItemGroup();
     }
 
@@ -95,12 +95,12 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
     }
 
     protected int getSearchX() {
-        return this.guiLeft + (100 /*default left*/ + 65 /*default width*/) - this.searchField.func_230998_h_();
+        return this.guiLeft + (100 /*default left*/ + 65 /*default width*/) - this.searchField.getWidth();
     }
 
     @Override
-    public void func_231023_e_() {
-        super.func_231023_e_();
+    public void tick() {
+        super.tick();
         this.searchField.tick();
     }
 
@@ -115,7 +115,7 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
                 int k1 = slot.yPos + this.guiTop;
                 RenderSystem.colorMask(true, true, true, false);
                 slotColor = this.getSlotColor(slot.slotNumber);
-                this.func_238468_a_(matrix, j1, k1, j1 + 16, k1 + 16, slotColor, slotColor);
+                this.blit(matrix, j1, k1, j1 + 16, k1 + 16, slotColor, slotColor);
                 RenderSystem.colorMask(true, true, true, true);
                 //RenderSystem.enableLighting(); Was here in 1.14
                 RenderSystem.enableDepthTest();
@@ -125,22 +125,22 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
     }
 
     @Override
-    public boolean func_231042_a_(char p_charTyped_1_, int p_charTyped_2_) {
+    public boolean charTyped(char p_charTyped_1_, int p_charTyped_2_) {
         if (this.field_195377_F) {
             return false;
         }
         String s = this.searchField.getText();
-        if (this.searchField.func_231042_a_(p_charTyped_1_, p_charTyped_2_)) {
+        if (this.searchField.charTyped(p_charTyped_1_, p_charTyped_2_)) {
             if (!Objects.equals(s, this.searchField.getText())) {
                 this.updateCreativeSearch();
             }
             return true;
         }
-        return super.func_231042_a_(p_charTyped_1_, p_charTyped_2_);
+        return super.charTyped(p_charTyped_1_, p_charTyped_2_);
     }
 
     @Override
-    public boolean func_231046_a_(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
+    public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
         this.field_195377_F = false;
         //boolean flag = !this.hasTmpInventory(this.hoveredSlot) || this.hoveredSlot != null && this.hoveredSlot.getHasStack();
         boolean flag = this.hoveredSlot != null && this.hoveredSlot.getHasStack();
@@ -149,14 +149,14 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
             return true;
         } else {
             String s = this.searchField.getText();
-            if (this.searchField.func_231046_a_(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_)) {
+            if (this.searchField.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_)) {
                 if (!Objects.equals(s, this.searchField.getText())) {
                     this.updateCreativeSearch();
                 }
 
                 return true;
             } else {
-                return this.searchField.func_230999_j_() && this.searchField.getVisible() && p_keyPressed_1_ != 256 || super.func_231046_a_(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
+                return this.searchField.isFocused() && this.searchField.getVisible() && p_keyPressed_1_ != 256 || super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
             }
         }
         //return super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
@@ -169,8 +169,8 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
     }
 
     @Override   //copied
-    protected void func_230457_a_(MatrixStack matrix, ItemStack stack, int p_renderTooltip_2_, int p_renderTooltip_3_) {
-        List<ITextComponent> list = stack.getTooltip(this.field_230706_i_.player, this.field_230706_i_.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
+    protected void renderTooltip(MatrixStack matrix, ItemStack stack, int p_renderTooltip_2_, int p_renderTooltip_3_) {
+        List<ITextComponent> list = stack.getTooltip(this.minecraft.player, this.minecraft.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
         List<ITextComponent> list1 = Lists.newArrayList(list);
         Item item = stack.getItem();
         ItemGroup itemgroup = item.getGroup();
@@ -189,7 +189,7 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
         }
 
         this.tagSearchResults.forEach((p_214083_2_, p_214083_3_) -> {
-            if (p_214083_3_.func_230235_a_(item)) {
+            if (p_214083_3_.contains(item)) {
                 list1.add(1, (new StringTextComponent("#" + p_214083_2_)).func_240699_a_(TextFormatting.DARK_PURPLE));
             }
 
@@ -200,22 +200,22 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
 
         net.minecraft.client.gui.FontRenderer font = stack.getItem().getFontRenderer(stack);
         net.minecraftforge.fml.client.gui.GuiUtils.preItemToolTip(stack);
-        this.func_238654_b_(matrix, list1, p_renderTooltip_2_, p_renderTooltip_3_, (font == null ? this.field_230712_o_ : font));
+        this.renderTooltip(matrix, list1, p_renderTooltip_2_, p_renderTooltip_3_, (font == null ? this.font : font));
         net.minecraftforge.fml.client.gui.GuiUtils.postItemToolTip();
 
     }
 
     @Override
-    public void func_230430_a_ (MatrixStack matrix, int mouseX, int mouseY, float partialTicks) {
-        this.func_230446_a_(matrix);
+    public void render (MatrixStack matrix, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(matrix);
 
-        super.func_230430_a_ (matrix, mouseX, mouseY, partialTicks);
+        super.render(matrix, mouseX, mouseY, partialTicks);
         if (!this.searchField.getText().isEmpty()) {
             this.highLightSlots(matrix);
         }
         this.getItemGroup();
         if (this.group != null) {
-            this.field_230712_o_.func_238421_b_(matrix, I18n.format(this.group.getTranslationKey()), this.guiLeft + 4, this.guiTop + 6, 4210752);
+            this.font.drawString(matrix, I18n.format(this.group.getTranslationKey()), this.guiLeft + 4, this.guiTop + 6, 4210752);
         }
         this.func_230459_a_(matrix, mouseX, mouseY);
 
@@ -225,14 +225,14 @@ public class MetaChestScreen extends ContainerScreen<MetaChestContainer> {
     protected void func_230450_a_(MatrixStack matrix, float partialTicks, int mouseX, int mouseY) {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.getMinecraft().getTextureManager().bindTexture(GUI);
-        this.func_238474_b_(matrix, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-        this.searchField.func_230430_a_ (matrix, mouseX, mouseY, partialTicks);
+        this.blit(matrix, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+        this.searchField.render(matrix, mouseX, mouseY, partialTicks);
     }
 
-    //@Override
-    //public boolean isPauseScreen() {
-    //    return false;
-    //}
+    @Override
+    public boolean isPauseScreen() {
+        return false;
+    }
 
     //copied and modified
     private void updateCreativeSearch() {

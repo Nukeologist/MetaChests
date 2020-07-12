@@ -138,7 +138,7 @@ public class MetaChestBlock extends Block implements IWaterLoggable {
         final TileEntity te = worldIn.getTileEntity(pos);
         if (te instanceof MetaChestTileEntity && placer != null) {
             if (stack.hasTag()) {
-                te.func_230337_a_(state, stack.getTag().getCompound("BlockEntityTag"));
+                te.read(state, stack.getTag().getCompound("BlockEntityTag"));
                 te.setPos(pos); //when it reads, it reads the old pos.
             }
         }
